@@ -8,32 +8,44 @@ public class CreateHeightMapMy : MonoBehaviour
     float[,] array = new float[12,12];
     Chunk[] chunks = new Chunk[144];
     
-    public GameObject block;
+    public GameObject darkergrass;
+    public GameObject grass;
 
     // Start is called before the first frame update
     void Start()
     {
 
         for(int i = 0; i < chunks.GetLength(0); i++) {
-            array[0,0] = Random.Range(1,10);
-            FillArray(array, 0, 0);
-             chunks[i] = new Chunk(array);
+            float[,] array2 = new float[12,12];
+            array2[0,0] = Random.Range(1,10);
+            FillArray(array2, 0, 0);
+            
+            chunks[i] = new Chunk(array2);
         }
         
         
-        
+        int relena = Random.Range(1,100);
 
-        string ausgabe = string.Empty;
 
+        //Jesus christ instantiate Block
+        //Also: du gehst in einem chunk ein 2d feld durch, und platzierst es in einem "terrain" welches auch 2d ist deswegen 4 for schleifen
+        //Vorgangsweise: als erstes unten links von jedem chunk in der untersten reihe des Terrains platzieren dann einen nach rechts im generierten array und die werden dann
+        //auf der untersten terrain achse platziert jeweils bis eine ganze reihe fertig is, dann eine reihe nach oben dann so weiter.
         for(int i = 0; i < array.GetLength(0); i++) {
             for(int o = 0; o < array.GetLength(1); o++) {
-                Instantiate(block, new Vector3((i+ 12*i) * 2 ,1 + chunks[0].getArray()[i,o]/10, (o + o*12) * 2), Quaternion.identity);
+                for(int p = 0; p<array.GetLength(0); p++) {
+                    for(int q = 0; q<array.GetLength(0); q++) {
+                        if(relena >= 50) Instantiate(grass, new Vector3((p*4 + (48*q)) ,1 + chunks[(i*12+q)].getArray()[p,o]/6, (o*4 + (i*48)) ), Quaternion.identity);
+                        //UnityEngine.Debug.Log("chunk=" + (p*12+q) + " stelle=" + p + "," + o +  " hoehe=" + chunks[(p*12 + q)].getArray()[p,o]);
+                        if(relena < 50) Instantiate(darkergrass, new Vector3((p*4 + 48*q)  ,1 + chunks[(i*12+q)].getArray()[p,o]/6, (o*4 + i*48) ), Quaternion.identity);
+                        relena = Random.Range(1,100);
+                    }
+                }
                 
-                ausgabe += array[i,o] + "|";
+                
+                
             }
-            ausgabe += "\n";
         }
-        UnityEngine.Debug.Log(ausgabe);
     }
 
     // Update is called once per frame
